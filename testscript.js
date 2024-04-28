@@ -1,46 +1,72 @@
-// API URL
 const contentURL = `https://coauth.com/test.json`;
-
-// accordion container
 const testEl = document.querySelector("#test");
 
 async function fetchContent() {
   try {
-    // fetch data
     const response = await fetch(contentURL);
     const data = await response.json();
 
-    const testContent = document.createElement("div");
-    testContent.classList.add("accordion");
-    testContent.id = "dataAccordion";
-    testEl.appendChild(testContent);
+    const accordionContainer = document.createElement("div");
+    accordionContainer.classList.add("accordion");
+    accordionContainer.id = "dataAccordion";
+    testEl.appendChild(accordionContainer);
 
-    const accordionDiv = document.querySelector(".accordion");
+    console.log(data);
 
-    Object.keys(data).forEach((key) => {
-      const value = data[key];
-      console.log(`${key}:  ${value}`);
-
-      // accordion item
+    Object.entries(data).forEach(([key, value]) => {
       const accordionItem = document.createElement("div");
       accordionItem.classList.add("accordion-item");
-      accordionDiv.appendChild(accordionItem);
 
-      // accordion header
+      makeAccordionHeader(key, accordionItem);
+      makeAccordionBody(key, value, accordionItem);
 
-      // accordion body
-      // const accordionBody = document.createElement("div");
-      // const accordionCollapse = document.createElement("div");
-
-      // accordionBody.classList.add("accordion-body");
-      // accordionBody.innerText = `${value}`;
-      // accordionBody.appendChild("accordion-collapse");
-
-      // accordionCollapse.classList.add("accordion-collapse collapse");
-      // accordionCollapse.id = `body-${key}`;
+      accordionContainer.appendChild(accordionItem);
     });
+
+    openFirstAccordion();
   } catch (error) {
-    console.error(error.message);
+    console.error("An error occurred:", error.message);
+  }
+}
+
+// accordion Header
+async function makeAccordionHeader(key, accordionItem) {
+  const accordionHeader = document.createElement("h2");
+  accordionHeader.classList.add("accordion-header");
+
+  const accordionButton = document.createElement("button");
+  accordionButton.classList.add("accordion-button");
+  accordionButton.type = "button";
+  accordionButton.setAttribute("data-bs-toggle", "collapse");
+  accordionButton.setAttribute("data-bs-target", `#${key}`);
+  accordionButton.setAttribute("aria-expanded", true);
+  accordionButton.setAttribute("aria-controls", `${key}`);
+  accordionButton.innerText = key;
+
+  accordionHeader.appendChild(accordionButton);
+  accordionItem.appendChild(accordionHeader);
+}
+
+// accordion Body
+async function makeAccordionBody(key, value, accordionItem) {
+  const accordionCollapse = document.createElement("div");
+  accordionCollapse.id = key;
+  accordionCollapse.classList.add("accordion-collapse", "collapse");
+  accordionCollapse.setAttribute("data-bs-parent", "#dataAccordion");
+
+  const accordionBody = document.createElement("div");
+  accordionBody.classList.add("accordion-body");
+  accordionBody.innerText = value;
+
+  accordionCollapse.appendChild(accordionBody);
+  accordionItem.appendChild(accordionCollapse);
+}
+
+// open first accordion if exists
+async function openFirstAccordion() {
+  const firstAccordion = document.querySelector(".accordion-collapse");
+  if (firstAccordion) {
+    firstAccordion.classList.add("show");
   }
 }
 

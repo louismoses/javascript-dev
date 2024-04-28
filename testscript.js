@@ -1,7 +1,26 @@
 const contentURL = `https://coauth.com/test.json`;
 const testEl = document.querySelector("#test");
 
+const refreshButton = document.querySelector(".button-count");
+
+refreshButton.addEventListener("click", fetchContent);
+
+// disable refresh button
+async function disableRefreshButton() {
+  const countDownTime = 5;
+  refreshButton.setAttribute("disabled", "");
+
+  // Delay for 5 seconds
+  setTimeout(enableRefreshButton, 5000);
+}
+
+// enable refresh button
+async function enableRefreshButton() {
+  refreshButton.removeAttribute("disabled");
+}
+
 async function fetchContent() {
+  disableRefreshButton();
   try {
     const response = await fetch(contentURL);
     const data = await response.json();
@@ -10,8 +29,6 @@ async function fetchContent() {
     accordionContainer.classList.add("accordion");
     accordionContainer.id = "dataAccordion";
     testEl.appendChild(accordionContainer);
-
-    console.log(data);
 
     Object.entries(data).forEach(([key, value]) => {
       const accordionItem = document.createElement("div");

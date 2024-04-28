@@ -17,8 +17,17 @@ async function fetchContent() {
       const accordionItem = document.createElement("div");
       accordionItem.classList.add("accordion-item");
 
-      makeAccordionHeader(key, accordionItem);
-      makeAccordionBody(key, value, accordionItem);
+      if (typeof value === "object") {
+        Object.entries(value).forEach(([subKey, subValue]) => {
+          makeAccordionHeader(subKey, accordionItem);
+          makeAccordionBody(subKey, subValue, accordionItem);
+        });
+      }
+      // eliminate parent object
+      if (typeof value !== "object") {
+        makeAccordionHeader(key, accordionItem);
+        makeAccordionBody(key, value, accordionItem);
+      }
 
       accordionContainer.appendChild(accordionItem);
     });

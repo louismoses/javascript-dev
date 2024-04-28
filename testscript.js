@@ -2,32 +2,43 @@ const contentURL = `https://coauth.com/test.json`;
 const testEl = document.querySelector("#test");
 
 const refreshButton = document.querySelector(".button-count");
-
 refreshButton.addEventListener("click", fetchContent);
+
+let accordionNumber = 0;
 
 // disable refresh button
 async function disableRefreshButton() {
   const countDownTime = 5;
   refreshButton.setAttribute("disabled", "");
 
-  // Delay for 5 seconds
-  setTimeout(enableRefreshButton, 5000);
+  for (let i = countDownTime; i > 0; i--) {
+    refreshButton.innerText = i;
+    await delay(1000);
+  }
+  enableRefreshButton();
 }
 
 // enable refresh button
 async function enableRefreshButton() {
+  refreshButton.innerText = "Refresh";
   refreshButton.removeAttribute("disabled");
 }
 
+// Utility function to delay execution
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function fetchContent() {
+  accordionNumber++;
   disableRefreshButton();
   try {
     const response = await fetch(contentURL);
     const data = await response.json();
 
     const accordionContainer = document.createElement("div");
-    accordionContainer.classList.add("accordion");
-    accordionContainer.id = "dataAccordion";
+    accordionContainer.classList.add("accordion", "py-3");
+    accordionContainer.id = `dataAccordion${accordionNumber}`;
     testEl.appendChild(accordionContainer);
 
     Object.entries(data).forEach(([key, value]) => {
